@@ -84,6 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error) throw error;
 
     if (data.user) {
+      // 1. INSERT ke tabel PROFILES
       const { error: profileError } = await supabase
         .from('profiles')
         .insert({
@@ -95,6 +96,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (profileError) throw profileError;
 
       if (role === 'technician') {
+        // ** SOLUSI RLS TIMING: Jeda 300ms untuk Supabase RLS sync **
+        await new Promise(resolve => setTimeout(resolve, 300)); 
+        
+        // 2. INSERT ke tabel TECHNICIANS
         const { error: techError } = await supabase
           .from('technicians')
           .insert({
