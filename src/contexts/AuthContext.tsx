@@ -84,7 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error) throw error;
 
     if (data.user) {
-      // 1. INSERT ke tabel PROFILES
+      // 1. INSERT ke tabel PROFILES (Ini harus berhasil!)
       const { error: profileError } = await supabase
         .from('profiles')
         .insert({
@@ -95,22 +95,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (profileError) throw profileError;
 
-      if (role === 'technician') {
-        // ** SOLUSI RLS TIMING: Jeda 300ms untuk Supabase RLS sync **
-        await new Promise(resolve => setTimeout(resolve, 300)); 
-        
-        // 2. INSERT ke tabel TECHNICIANS
-        const { error: techError } = await supabase
-          .from('technicians')
-          .insert({
-            user_id: data.user.id,
-            specialty: 'General Barber',
-            bio: 'Professional barber',
-            availability: ['09:00', '11:00', '14:00', '16:00'],
-          });
-
-        if (techError) throw techError;
-      }
+      // 🛑 LOGIKA INSERT KE TABEL 'technicians' DIHAPUS DARI SINI
+      //    Karena sudah dipindahkan ke Postgres Trigger di Supabase.
     }
   };
 
