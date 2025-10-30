@@ -26,16 +26,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const loadProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error loading profile:', error);
+        return; 
+      }
+
+      setProfile(data);
+    } catch (e) {
+        console.error("Critical error in loadProfile", e);
+    }
+  };
+  
+  // Perbaikan untuk memastikan loading spinner hilang
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      (async () => {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await loadProfile(session.user.id);
+    const initializeAuth = async () => {
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            setUser(session?.user ?? null);
+            if (session?.user) {
+                await loadProfile(session.user.id);
+            }
+        } catch (error) {
+            console.error("Error during initial session load:", error);
+        } finally {
+            // PENTING: Panggil setLoading(false) di akhir agar loading spinner hilang
+            setLoading(false);
         }
-        setLoading(false);
-      })();
-    });
+    };
+    
+    initializeAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       (async () => {
@@ -50,21 +77,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return () => subscription.unsubscribe();
   }, []);
-
-  const loadProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
-
-    if (error) {
-      console.error('Error loading profile:', error);
-      return;
-    }
-
-    setProfile(data);
-  };
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -84,7 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error) throw error;
 
     if (data.user) {
-      // 1. INSERT ke tabel PROFILES (Ini harus berhasil!)
+      // 1. INSERT ke tabel PROFILES
       const { error: profileError } = await supabase
         .from('profiles')
         .insert({
