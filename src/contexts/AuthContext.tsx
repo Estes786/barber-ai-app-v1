@@ -88,28 +88,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUp = async (email: string, password: string, fullName: string, role: string) => {
-    const { data, error } = await supabase.auth.signUp({
+    // 🛑 SEMUA DATA PROFIL (full_name, role) DIABAIKAN DI SINI.
+    // Tugasnya hanya membuat user di auth.users.
+    // Trigger Supabase akan membuat baris di tabel profiles.
+    
+    const { error } = await supabase.auth.signUp({
       email,
       password,
+      // Jika Anda ingin menyimpan role, gunakan metadata (tapi lebih rumit)
+      // options: {
+      //   data: { role: role, full_name: fullName }
+      // }
     });
 
     if (error) throw error;
-
-    if (data.user) {
-      // 1. INSERT ke tabel PROFILES
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: data.user.id,
-          full_name: fullName,
-          role: role,
-        });
-
-      if (profileError) throw profileError;
-
-      // 🛑 LOGIKA INSERT KE TABEL 'technicians' DIHAPUS DARI SINI
-      //    Karena sudah dipindahkan ke Postgres Trigger di Supabase.
-    }
   };
 
   const signOut = async () => {
