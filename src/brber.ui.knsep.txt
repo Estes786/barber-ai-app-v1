@@ -1,0 +1,49 @@
+Sketsa Antarmuka Pengguna: Fitur Generatif Barber-AI
+Desain ini mengadopsi prinsip mobile-first dengan fokus pada kemudahan penggunaan (UX) untuk teknisi setelah menyelesaikan layanan.
+Tahap 1: Unggah Foto (Upload Stage)
+Tujuan: Mengambil atau mengunggah foto hasil potong rambut dari pelanggan.
+Tampilan Layar Utama:
+ * Judul Halaman: Barber-AI Generatif
+ * Sub-Judul: "Ubah Hasil Potong menjadi Konten Viral dalam Sekali Klik"
+ * Area Aksi (Kontainer Besar):
+   * Tampilan berupa kotak besar, rounded (melengkung), dengan garis putus-putus berwarna cerah (biru atau ungu).
+   * Ikon Tengah: Ikon Upload Cloud atau Kamera yang besar.
+   * Teks Utama: "Ketuk untuk Unggah Foto Hasil Potong" (Font tebal).
+   * Teks Sekunder: "Ambil foto langsung atau pilih dari galeri. Max 5MB."
+   * Interaksi: Area ini berfungsi sebagai tombol yang memicu pembuka kamera atau file explorer.
+ * Status Pesan (Bawah): "Siap untuk foto hasil potong berikutnya."
+Tahap 2: Pemrosesan AI (Processing Stage)
+Tujuan: Memberi tahu pengguna bahwa gambar sedang dikirim ke Hugging Face dan diproses.
+Tampilan Layar Pemrosesan:
+ * Pusat Perhatian: Tampilan loading yang jelas.
+   * Ikon: Ikon Spinner (berputar) atau Loader yang besar, berwarna cerah (misalnya, biru/kuning yang bergerak).
+   * Teks Utama: "AI Sedang Bekerja Keras..."
+   * Teks Detail: "Gambar sedang ditingkatkan kualitasnya, dikoreksi warna, dan caption sedang digenerasi. Mohon tunggu 3-10 detik."
+ * Preview Foto (Opsional, tapi Direkomendasikan):
+   * Foto mentah yang baru diunggah ditampilkan dalam ukuran kecil (thumbnail) di bawah teks detail, diberi bingkai merah atau label 'RAW' untuk membedakannya.
+Tahap 3: Hasil Generatif (Result Stage)
+Tujuan: Menampilkan hasil gambar yang sudah ditingkatkan dan pilihan caption yang digenerasi oleh AI.
+Tampilan Layar Hasil:
+ * Status Sukses:
+   * Judul: ✨ Hasil Generatif AI Selesai! (Disertai ikon petir/bintang).
+   * Kotak Pesan: Pesan singkat berwarna hijau, "Pemrosesan berhasil. Pilih caption favorit Anda dan bagikan!"
+ * Area Tampilan Gambar:
+   * Fokus Utama: Gambar hasil peningkatan AI.
+   * Gambar tampil besar, full width, dengan sudut membulat.
+   * Caption Overlay: Di bagian bawah gambar, ada lapisan transparan gelap tempat caption yang sedang dipilih (dari daftar di bawah) ditampilkan secara real-time.
+ * Area Pilihan Caption:
+   * Kontainer terpisah dengan latar belakang putih/abu-abu muda.
+   * Judul: "Pilih Caption Terbaik Anda:"
+   * Daftar Pilihan (3-5 Captions):
+     * Setiap caption adalah elemen yang dapat diklik.
+     * Saat diklik, caption tersebut akan muncul di overlay gambar, dan elemen daftar akan berubah warna (misalnya, menjadi latar belakang biru muda dengan bingkai tebal).
+     * Contoh Item:
+       * [Ikon Panah] "Fresh cut, who dis? Potongan rambut baru ini siap bikin kamu jadi sorotan! ✨ #BarberAI" [Ikon Jempol (jika terpilih)]
+ * Tombol Aksi (Selalu di Bagian Bawah):
+   * Tombol 1 (Kiri): Bagikan ke Media Sosial
+     * Warna: Hijau (Tombol Aksi Utama).
+     * Ikon: Share.
+     * Fungsi: Mengunduh gambar yang ditingkatkan dan menyalin caption yang dipilih ke clipboard.
+   * Tombol 2 (Kanan): Potong Baru
+     * Warna: Biru/Abu-abu (Tombol Aksi Sekunder).
+     * Fungsi: Mengatur ulang aplikasi ke Tahap 1.

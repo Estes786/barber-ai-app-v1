@@ -1,0 +1,65 @@
+-- Skema Database PostgreSQL (Supabase) untuk Barber App Generatif
+
+-- Tabel 1: users (Penyimpanan data pengguna dan otentikasi)
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    email TEXT UNIQUE NOT NULL,
+    full_name TEXT,
+    role TEXT NOT NULL DEFAULT 'customer' CHECK (role IN ('customer', 'technician', 'admin')),
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+-- Tabel 2: technicians (Detail khusus untuk peran teknisi)
+CREATE TABLE technicians (
+    user_id UUID PRIMARY KEY REFERENCES users(id),
+    shop_id UUID, -- Kunci asing ke tabel barbershops (jika ada)
+    specialty TEXT, -- Contoh: 'Fade Master', 'Long Hair Specialist'
+    rating NUMERIC(2, 1) DEFAULT 0.0
+);
+
+-- Tabel 3: services (Daftar layanan yang ditawarkan)
+CREATE TABLE services (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    service_name TEXT NOT NULL,
+    duration_minutes INTEGER NOT NULL,
+    price NUMERIC(10, 2) NOT NULL
+);
+
+-- Tabel 4: bookings (Penyimpanan semua janji temu)
+CREATE TABLE bookings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    customer_id UUID REFERENCES users(id),
+    technician_id UUID REFERENCES technicians(user_id),
+    service_id UUID REFERENCES services(id),
+    booking_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    status TEXT NOT NULL DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'completed', 'canceled')),
+    notes TEXT
+);
+
+-- Tabel 5: posts (Galeri Portofolio AI - Inti dari fitur generatif)
+CREATE TABLE posts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    technician_id UUID REFERENCES technicians(user_id),
+    customer_id UUID REFERENCES users(id),
+    booking_id UUID REFERENCES bookings(id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    
+    -- URL Gambar Mentah dari Supabase Storage
+    raw_image_url TEXT NOT NULL,
+    
+    -- URL Gambar Hasil Peningkatan AI
+    enhanced_image_url TEXT, 
+    
+    -- Teks/Caption Hasil Generasi AI (Disimpan sebagai JSON Array untuk menyimpan beberapa pilihan)
+    generated_captions JSONB, 
+    
+    -- Caption yang dipilih oleh pelanggan/teknisi
+    selected_caption TEXT,
+    
+    ai_status TEXT NOT NULL DEFAULT 'pending' CHECK (ai_status IN ('pending', 'processing', 'completed', 'failed'))
+);
+
+-- Indeks untuk pencarian cepat berdasarkan teknisi dan status
+CREATE INDEX idx_posts_technician_ai_status ON posts (technician_id, ai_status);
+
